@@ -1,0 +1,5 @@
+in.svg is a template worksheet.
+mathpuzzle.svg will transform it into a prinable worksheet.
+At present, the program only generates one output; 
+in the future it will generate one at random, according to a user-
+supplied specification.
