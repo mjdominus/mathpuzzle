@@ -1,13 +1,13 @@
 #!/usr/bin/perl
 use utf8;
-my @vals = qw(+2 *2 -2 /2 -1
-              +7 *2 -9 -5 /2
-              *2 +8 /2 -7 +3
-              +4 *3 -9 /3 -1
-             );
+
+use Getopt::Std;
+# -M max-multiplier
+my %opt = (M => 3, A => 9);
+getopts('M:A:', \%opt) or die "Usage\n";
 
 my @pats = ([qw(a b * x /)],
-	    [qw(a * cb x /)],
+	    [qw(a * b x /)],
 	    [qw(* a b x /)],
 	    [qw(a * b / x)],
 	    [qw(* a b / x)],
@@ -40,11 +40,20 @@ sub randc {
   return  rand() < $p ? $a : $b;
 }
 
+# uniformly-distributed random integer
+# between $max and $min inclusive
+sub randr {
+  my ($min, $max) = @_;
+  return $min + randn($max+1-$min);
+}
+
+# uniform random integer in [0, n)
 sub randn {
   my $n = shift;
   return int(rand($n));
 }
 
+# random array element
 sub randa {
   my @a = @_;
   my $n = randn(scalar @a);
