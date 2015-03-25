@@ -3,8 +3,8 @@ use utf8;
 
 use Getopt::Std;
 # -M max-multiplier
-my %opt = (M => 3, A => 9);
-getopts('M:A:', \%opt) or die "Usage\n";
+my %opt = (M => 3, A => 9, z => 0);
+getopts('zM:A:', \%opt) or die "Usage\n";
 
 my @pats = ([qw(a b * x /)],
 	    [qw(a * b x /)],
@@ -52,6 +52,22 @@ sub select_multipliers {
   }
   if ($gotMax) { push @M, randr($min, $max++) } else { push @M, $Max }
   return @M;
+}
+
+sub adder_string {
+  my ($n) = @_;
+  return $n < 0 ? "$n" : "+$n";
+}
+
+# select uniformly
+# but disallow zero unless -z was given
+sub select_adder {
+  my ($min, $max) = @_;
+  my $sel;
+  do {
+    $sel = randr($min, $max);
+  } while $sel == 0 && !$opt{z};
+  return $sel;
 }
 
 sub randc {
