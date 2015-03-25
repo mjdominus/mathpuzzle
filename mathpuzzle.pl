@@ -14,14 +14,13 @@ my @pats = ([qw(a b * x /)],
 	    [qw(* a / b x)],
 	   );
 
-my $bigC = randc(1/2, 3, 4);
-for my $row (qw(A B C D)) {
-    my $c = randc(2/3, 2, $bigC);
-    $bigC = 2 if $c == $bigC;
-    my $pat = randa(@pats);
-}
+# select multipliers
+my @multipliers = select_multipliers(4, 2, $opt{M});
 
-for (@vals) { tr{*}{×}; tr{/}{÷}; }
+# for each group, pick a, b at random, either positive or negative
+# generate five values, including calculation of x
+# insert into %t
+
 for my $letter (qw(A B C D)) {
   for my $number (1..5) {
     $t{"$letter$number"} = shift @vals;
@@ -33,6 +32,26 @@ binmode(STDOUT, ":utf8");
 while (<>) {
   s/([A-D][1-5])/$t{$1}/g;
   print;
+}
+
+# select N multipliers
+# min is first
+# then min or min+1
+# then min or min+1 or min+2
+# etc.
+# but there must be one that is the Max.
+sub select_multipliers {
+  my ($N, $min, $Max) = @_;
+  my $max = $min;
+  my $gotMax = 0;
+  my @M;
+  while (@M < $N-1) {
+    push @M, randr($min, $max++); # max goes up by 1 each time
+    $max = $Max if $max > $Max;  # Max is the absolute cap
+    $gotMax = 1 if $M[-1] == $Max;
+  }
+  if ($gotMax) { push @M, randr($min, $max++) } else { push @M, $Max }
+  return @M;
 }
 
 sub randc {
