@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 use utf8;
 
+use POSIX qw(ceil);
 use Getopt::Std;
 # -M max-multiplier
 my %opt = (M => 3, A => 9, z => 0);
@@ -100,15 +101,18 @@ sub total {
 # If Max is really big, maybe increase min by more than 1 each time
 sub select_multipliers {
   my ($N, $min, $Max) = @_;
+  my $inc = ceil(($Max-$min+1)/$N);
   my $max = $min;
   my $gotMax = 0;
   my @M;
   while (@M < $N-1) {
-    push @M, randr($min, $max++); # max goes up by 1 each time
+    push @M, randr($min, $max); # max goes up by 1 each time
+    $max += $inc;
     $max = $Max if $max > $Max;  # Max is the absolute cap
     $gotMax = 1 if $M[-1] == $Max;
   }
-  if ($gotMax) { push @M, randr($min, $max++) } else { push @M, $Max }
+  if ($gotMax) { push @M, randr($min, $max) }
+  else { push @M, randr($max-$inc+1, $max) }
   return @M;
 }
 
