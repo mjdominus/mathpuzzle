@@ -3,9 +3,12 @@ use utf8;
 
 use POSIX qw(ceil);
 use Getopt::Std;
+# -m min-multiplier
 # -M max-multiplier
-my %opt = (M => 3, A => 9, z => 0);
-getopts('zM:A:', \%opt) or die "Usage\n";
+# -A max summand in + and -
+# -z allow 0 as a summand
+my %opt = (m => 2, M => 3, A => 9, z => 0);
+getopts('zm:M:A:', \%opt) or die "Usage\n";
 
 my @pats = ([qw(a b * x /)],
 	    [qw(a * b x /)],
@@ -21,7 +24,7 @@ my %optab = ('+' => sub { $_[0] + $_[1] },
             );
 
 # select multipliers
-my @multipliers = select_multipliers(4, 2, $opt{M});
+my @multipliers = select_multipliers(4, $opt{m}, $opt{M});
 
 # for each group, pick a, b at random, either positive or negative
 # generate five values, including calculation of x
